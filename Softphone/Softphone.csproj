@@ -65,17 +65,23 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AudioIn.cs" />
+    <Compile Include="AudioLoopTest.xaml.cs">
+      <DependentUpon>AudioLoopTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AudioOut.cs" />
     <Compile Include="Call.cs" />
     <Compile Include="FrameSender.cs" />
+    <Compile Include="GenericEventArgs.cs" />
     <Compile Include="IaxFrame.cs" />
     <Compile Include="ICall.cs" />
     <Compile Include="InformationElement.cs" />
     <Compile Include="JitterBuffer.cs" />
+    <Compile Include="LogService.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MD5.cs" />
+    <Compile Include="MemoryAudioSink.cs" />
     <Compile Include="PingCall.cs" />
     <Compile Include="RecordPage.xaml.cs">
       <DependentUpon>RecordPage.xaml</DependentUpon>
@@ -90,6 +96,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Page Include="AudioLoopTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

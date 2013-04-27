@@ -12,6 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using System.Windows.Threading;
 
 namespace Softphone
 {
@@ -22,6 +23,12 @@ namespace Softphone
         /// </summary>
         /// <returns>Корневой кадр приложения телефона.</returns>
         public PhoneApplicationFrame RootFrame { get; private set; }
+
+        static Dispatcher disp;
+        public static void RunOnUI(Action act)
+        {
+            disp.BeginInvoke(act);
+        }
 
         /// <summary>
         /// Конструктор объекта приложения.
@@ -120,6 +127,7 @@ namespace Softphone
             // Создайте кадр, но не задавайте для него значение RootVisual; это позволит
             // экрану-заставке оставаться активным, пока приложение не будет готово для визуализации.
             RootFrame = new PhoneApplicationFrame();
+            disp = RootFrame.Dispatcher;
             RootFrame.Navigated += CompleteInitializePhoneApplication;
 
             // Обработка сбоев навигации

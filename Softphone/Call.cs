@@ -60,7 +60,13 @@ namespace Softphone
             this.ao = ao;
             ai.FrameReady += new AudioIn.SampleEventHandler((_s, _args) =>
             {
-                sendVoicFrame(_args.buffer);
+                int ts = timestamp;
+                int ots = 0;
+                for (int i = 0; i < _args.data.Length; i += 640)
+                {
+                    sendVoicFrame(_args.data,i,640,ts+ots);
+                    ots += 20;
+                }
             });
             fs.onMiniFrame += new FrameSender.MiniFrameEvent((_cn, _tm, _dta, _offs, _cnt) =>
             {
@@ -75,25 +81,26 @@ namespace Softphone
         }
         bool sendFullVoiceFrame = true;
         int oldts = 0;
-        public void sendVoicFrame(byte[] vf)
+        public void sendVoicFrame(byte[] vf,int offset,int length,int ts)
         {
-            byte[] voice = Alaw8.lin16toalaw(vf, 0, vf.Length);
-            int ts = timestamp;
+            byte[] voice = Alaw8.lin16toalaw(vf, offset, length);
             if (ts < oldts)
             {
                 sendFullVoiceFrame = true;
             }
             if (!sendFullVoiceFrame)
-                fs.sendMiniFrame(scall, timestamp, voice);
+                fs.sendMiniFrame(scall, ts, voice);
             else
             {
                 IaxFullFrame ifr = new IaxFullFrame();
                 ifr.frametype = FrameSender.VOICE;
                 ifr.subclass = 8;//alaw
                 ifr.data = voice;
+                ifr.timestamp = ts;
                 sendFullFrame(ifr);
                 sendFullVoiceFrame = false;
             }
+            //System.Diagnostics.Debug.WriteLine(string.Format("{0} ms", timestamp));
         }
 
         public const byte HANGUP = 1;

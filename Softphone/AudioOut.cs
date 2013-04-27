@@ -15,44 +15,38 @@ namespace Softphone
     public class AudioOut
     {
         DynamicSoundEffectInstance dse;
-        int _frag;
-        public AudioOut(int fragmentMS)
+        public AudioOut()
         {
             //se = new SoundEffect(
             dse = new DynamicSoundEffectInstance(16000, AudioChannels.Mono);
             dse.BufferNeeded += new EventHandler<EventArgs>(dse_BufferNeeded);
-            _frag = fragmentMS;
+            //_frag = fragmentMS;
         }
-
+        int bufCount = 0;
         void dse_BufferNeeded(object sender, EventArgs e)
         {
-            if (jb == null)
-            {
-                dse.Stop();
-            }
-            byte[] buffer = new byte[dse.GetSampleSizeInBytes(TimeSpan.FromMilliseconds(_frag))];
-            jb.Read(buffer, 0, buffer.Length);
-            dse.SubmitBuffer(buffer);
+            bufCount = 0;
+            dse.Stop();
         }
-        JitterBuffer jb = null;
         public void Start()
         {
-            jb = new JitterBuffer();
+            //jb = new JitterBuffer();
             dse.Play();
         }
 
         public void Stop()
         {
-            jb = null;
+            //jb = null;
             dse.Stop();
         }
 
         public void playFragment(byte[] buffer)
         {
-            if (jb == null) Start();
-            if (jb != null)
+            ++bufCount;
+            dse.SubmitBuffer(buffer);
+            if (dse.PendingBufferCount >= 10 && dse.State == SoundState.Stopped && bufCount > 4)
             {
-                jb.write(buffer, 0, buffer.Length);
+                dse.Play();
             }
         }
     }

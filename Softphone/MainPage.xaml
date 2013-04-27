@@ -29,13 +29,14 @@
         <!--ContentPanel – поместите здесь дополнительное содержимое-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="250*" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="467*" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0">
                 <Button Content="Register" Name="button1"  Click="button1_Click" />
                 <TextBox Text="31337" Name="cnumber"></TextBox>                
                 <Button Content="Test call" Name="button2" Click="button2_Click" />
+                <Button Content="Audio loop test" Name="loop" Click="loop_Click" />
             </StackPanel>
             <ListBox Name="logbox" Grid.Row="1">
                 

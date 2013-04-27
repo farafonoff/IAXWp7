@@ -51,7 +51,7 @@ namespace Softphone
         }
 
         AudioIn ai = new AudioIn(100);
-        AudioOut ao = new AudioOut(500);
+        AudioOut ao = new AudioOut();
 
         private void button2_Click(object sender, RoutedEventArgs e)
         {
@@ -59,6 +59,11 @@ namespace Softphone
             Call cl = new Call(fsender, ai, ao);
             cl.log += onLog;
             cl.Dial(cnumber.Text,acc);
+        }
+
+        private void loop_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/AudioLoopTest.xaml", UriKind.Relative));
         }
 
     }

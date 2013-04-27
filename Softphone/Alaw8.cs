@@ -64,7 +64,8 @@ namespace Softphone
         public static byte[] lin16toalaw(byte[] din, int offset, int count)
         {
             byte[] result = new byte[count / 4];
-            for (int i = offset; i < count; i += 4)
+            int end = count + offset;
+            for (int i = offset; i < end; i += 4)
             {
                 short sv = BitConverter.ToInt16(din, i);
                 result[(i - offset) / 4] = encode(sv);
