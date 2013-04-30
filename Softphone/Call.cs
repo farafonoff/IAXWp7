@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Ozeki.Media.Codec;
 
 namespace Softphone
 {
@@ -30,12 +31,38 @@ namespace Softphone
             Outgoing
         }
 
+        public enum CallCodec
+        {
+            ALAW = 0x8,
+            SPEEX = 0x9| 0x80
+        }
+
         public CallType type;
         Account acc;
+
+        public CallCodec codec { get; set; }
 
         public void Dial(string number, Account ac)
         {
             type = CallType.Outgoing;
+            codec = CallCodec.SPEEX;
+            byte[] cap = new byte[]{0,0,0,0};
+            byte[] fmt = cap;
+            switch (codec)
+            {
+                case CallCodec.ALAW:
+                    {
+                        cap = new byte[] { 0, 0, 0, 8 };
+                        fmt = cap;
+                        break;
+                    }
+                case CallCodec.SPEEX:
+                    {
+                        cap = new byte[] { 0, 0, 2, 0 };
+                        fmt = cap;
+                        break;
+                    }
+            }
             fs.addCall(this);
             IaxFullFrame fnew = new IaxFullFrame();
             fnew.frametype = FrameSender.IAX;
@@ -45,12 +72,47 @@ namespace Softphone
                 new InformationElement(InformationElement.CALLEDNUMBER,number),
                 new InformationElement(InformationElement.USERNAME,ac.user),
                 new InformationElement(InformationElement.CALLINGPRES,new byte[]{0}),
-                new InformationElement(InformationElement.CAPABILITY,new byte[]{0,0,0,8}),//alaw
-                new InformationElement(InformationElement.FORMAT,new byte[]{0,0,0,8}),//alaw
+                new InformationElement(InformationElement.CAPABILITY,cap),//alaw
+                new InformationElement(InformationElement.FORMAT,fmt),//alaw
 
             };
             acc = ac;
             sendFullFrame(fnew);
+        }
+        const int timeframe = 20;
+        const int timeframingbytes = timeframe * 16 * 2;
+        CodecSpeexNarrowband speexCodec = new CodecSpeexNarrowband();
+
+        byte[] Encode(byte[] bs,int offset,int count)
+        {
+            switch (codec)
+            {
+                case CallCodec.ALAW: return Alaw8.lin16toalaw(bs, offset, count);
+                case CallCodec.SPEEX:
+                    {
+                        byte[] res = Resample.from16(bs, offset, count);
+                        return speexCodec.Encode(res);
+                    }
+
+            }
+            return null;
+        }
+
+        byte[] Decode(byte[] bs, int offset, int count)
+        {
+            switch (codec)
+            {
+                case CallCodec.ALAW: return Alaw8.alawtolin16(bs, offset, count);
+                case CallCodec.SPEEX:
+                    {
+                        byte[] vs = new byte[count];
+                        Array.Copy(bs,offset,vs,0,count);
+                        vs = speexCodec.Decode(vs);
+                        return Resample.to16(vs, 0, vs.Length);
+                    }
+
+            }
+            return null;
         }
 
         public Call(FrameSender fs, AudioIn ai, AudioOut ao)
@@ -62,19 +124,23 @@ namespace Softphone
             {
                 int ts = timestamp;
                 int ots = 0;
-                for (int i = 0; i < _args.data.Length; i += 640)
+                for (int i = 0; i < _args.data.Length; i += timeframingbytes)
                 {
-                    sendVoicFrame(_args.data,i,640,ts+ots);
-                    ots += 20;
+                    sendVoicFrame(_args.data,i,timeframingbytes,ts+ots);
+                    ots += timeframe;
                 }
             });
             fs.onMiniFrame += new FrameSender.MiniFrameEvent((_cn, _tm, _dta, _offs, _cnt) =>
             {
                 if (_cn != dstcall) return;
                 //byte[] pbuffer = new byte[_cnt];
-                byte[] pbuffer = Alaw8.alawtolin16(_dta, _offs, _cnt);
+                //byte[] pbuffer = Decode(_dta, _offs, _cnt);
+                byte[] v = new byte[_cnt];
+                Array.Copy(_dta, _offs, v, 0, _cnt);
+                //ao.enqueueFragment(() => Decode(_dta, _offs, _cnt));
+                ao.enqueueFragment(() => Decode(v, 0, v.Length));
                 //Array.Copy(_dta, _offs, pbuffer, 0, _cnt);
-                ao.playFragment(pbuffer);
+                //ao.playFragment(pbuffer);
             });
 
 
@@ -83,7 +149,7 @@ namespace Softphone
         int oldts = 0;
         public void sendVoicFrame(byte[] vf,int offset,int length,int ts)
         {
-            byte[] voice = Alaw8.lin16toalaw(vf, offset, length);
+            byte[] voice = Encode(vf, offset, length);
             if (ts < oldts)
             {
                 sendFullVoiceFrame = true;
@@ -94,7 +160,7 @@ namespace Softphone
             {
                 IaxFullFrame ifr = new IaxFullFrame();
                 ifr.frametype = FrameSender.VOICE;
-                ifr.subclass = 8;//alaw
+                ifr.subclass = (byte)codec;//alaw
                 ifr.data = voice;
                 ifr.timestamp = ts;
                 sendFullFrame(ifr);

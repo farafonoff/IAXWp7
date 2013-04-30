@@ -34,7 +34,7 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0">
                 <Button Content="Register" Name="button1"  Click="button1_Click" />
-                <TextBox Text="31337" Name="cnumber"></TextBox>                
+                <TextBox Text="0000" Name="cnumber"></TextBox>                
                 <Button Content="Test call" Name="button2" Click="button2_Click" />
                 <Button Content="Audio loop test" Name="loop" Click="loop_Click" />
             </StackPanel>

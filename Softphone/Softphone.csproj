@@ -57,6 +57,9 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Xml" />
     <Reference Include="mscorlib.extensions" />
+    <Reference Include="WPClientSDK">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Ozeki\VoIP SIP SDK\SDK\WPClientSDK.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account.cs" />
@@ -70,6 +73,9 @@
     </Compile>
     <Compile Include="AudioOut.cs" />
     <Compile Include="Call.cs" />
+    <Compile Include="CodecSpeexBase.cs" />
+    <Compile Include="CodecSpeexNarrowband.cs" />
+    <Compile Include="Converters.cs" />
     <Compile Include="FrameSender.cs" />
     <Compile Include="GenericEventArgs.cs" />
     <Compile Include="IaxFrame.cs" />
@@ -88,7 +94,43 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registration.cs" />
+    <Compile Include="Resample.cs" />
     <Compile Include="SampleEventArgs.cs" />
+    <Compile Include="Speex\BandMode.cs" />
+    <Compile Include="Speex\Bits.cs" />
+    <Compile Include="Speex\CodebookSearch.cs" />
+    <Compile Include="Speex\Codebook_Constants.cs" />
+    <Compile Include="Speex\Filters.cs" />
+    <Compile Include="Speex\HighLspQuant.cs" />
+    <Compile Include="Speex\IDecoder.cs" />
+    <Compile Include="Speex\IEncoder.cs" />
+    <Compile Include="Speex\Inband.cs" />
+    <Compile Include="Speex\InvalidFormatException.cs" />
+    <Compile Include="Speex\JitterBuffer.cs" />
+    <Compile Include="Speex\LbrLspQuant.cs" />
+    <Compile Include="Speex\Lpc.cs" />
+    <Compile Include="Speex\Lsp.cs" />
+    <Compile Include="Speex\LspQuant.cs" />
+    <Compile Include="Speex\Ltp.cs" />
+    <Compile Include="Speex\Ltp3Tap.cs" />
+    <Compile Include="Speex\LtpForcedPitch.cs" />
+    <Compile Include="Speex\Misc.cs" />
+    <Compile Include="Speex\NbCodec.cs" />
+    <Compile Include="Speex\NbDecoder.cs" />
+    <Compile Include="Speex\NbEncoder.cs" />
+    <Compile Include="Speex\NbLspQuant.cs" />
+    <Compile Include="Speex\NoiseSearch.cs" />
+    <Compile Include="Speex\SbCodec.cs" />
+    <Compile Include="Speex\SbDecoder.cs" />
+    <Compile Include="Speex\SbEncoder.cs" />
+    <Compile Include="Speex\SpeexDecoder.cs" />
+    <Compile Include="Speex\SpeexEncoder.cs" />
+    <Compile Include="Speex\SpeexJitterBuffer.cs" />
+    <Compile Include="Speex\SplitShapeSearch.cs" />
+    <Compile Include="Speex\Stereo.cs" />
+    <Compile Include="Speex\SubMode.cs" />
+    <Compile Include="Speex\Vbr.cs" />
+    <Compile Include="Speex\VQ.cs" />
     <Compile Include="XNAAsyncDispatcher.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -110,8 +152,11 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml" />
+    <None Include="Softphone_2013_05_01_00_38_21.sap" />
+    <None Include="Softphone_2013_05_01_00_45_38.sap" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplicationIcon.png">
