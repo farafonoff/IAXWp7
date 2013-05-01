@@ -192,11 +192,18 @@ namespace Softphone
                                 processAuthFrame(frm);
                                 break;
                             }
+                        case IaxFullFrame.HANGUP:
+                            {
+                                hangup();
+                                wlog("hangup");
+                                break;
+                            }
                         default:
                             break;
                     }
                     break;
                 case FrameSender.CONTROL:
+                    wlog("CONTROL FRAME:" + frm.subclass);
                     switch (frm.subclass)
                     {
                         case ANSWER:
@@ -221,9 +228,18 @@ namespace Softphone
                         case PROGRESS:
                             wlog("progress");
                             break;
+                        default:
+                            wlog("UNKNOWN TYPE");
+                            break;
                     }
                     break;
             }
+        }
+
+        private void hangup()
+        {
+            ai.Stop();
+            ao.Stop();
         }
         void processAuthFrame(IaxFullFrame frm)
         {

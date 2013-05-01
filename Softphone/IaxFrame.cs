@@ -23,6 +23,7 @@ namespace Softphone
         public const byte PING = 0x02;
         public const byte PONG = 0x03;
         public const byte ACK = 0x04;
+        public const byte HANGUP = 0x05;
         public const byte AUTHREQ = 0x08;
         public const byte AUTHREP = 0x09;
         public const byte POKE = 0x1e;

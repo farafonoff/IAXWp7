@@ -33,7 +33,7 @@ namespace Softphone
                 capSource.Stop();
                 sink = new MemoryAudioSink();
                 sink.CaptureSource = capSource;
-                sink.OnBufferFulfill += new EventHandler<GenericEventArgs<byte[]>>(sink_OnBufferFulfill);
+                sink.OnBufferFulfill += sink_OnBufferFulfill;
                 capSource.Start();
             });
         }
@@ -51,5 +51,15 @@ namespace Softphone
 
         public delegate void SampleEventHandler(object sender, GenericEventArgs<byte[]> e);
         public event SampleEventHandler FrameReady;
+
+        internal void Stop()
+        {
+            App.RunOnUI(() =>
+                {
+                    sink.OnBufferFulfill -= sink_OnBufferFulfill;
+                    sink = null;
+                    capSource.Stop();
+                });
+        }
     }
 }

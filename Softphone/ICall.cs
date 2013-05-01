@@ -45,6 +45,7 @@ namespace Softphone
         }
         protected void ack(IaxFullFrame onwhat)
         {
+            wlog(string.Format("ACK {0}:{1}",onwhat.frametype,onwhat.subclass));
             IaxFullFrame fr = new IaxFullFrame();
             fr.timestamp = onwhat.timestamp;
             fr.frametype = FrameSender.IAX;
